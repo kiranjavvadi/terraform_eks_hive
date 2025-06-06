@@ -1,6 +1,6 @@
 # AWS EKS Terraform Module - DevOps Take-Home Assignment
 
-This repository contains a Terraform module that deploys a containerized service to AWS EKS (Elastic Kubernetes Service) with all necessary infrastructure components including VPC, networking, and security configurations.
+This repository contains a Terraform module that deploys a containerized service to AWS EKS (Elastic Kubernetes Service).
 
 ## Architecture Overview
 
