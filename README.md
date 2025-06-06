@@ -26,6 +26,7 @@ The solution deploys:
 ├── README.md
 ├── main.tf
 ├── variables.tf
+├── terraform.tfvars
 ├── outputs.tf
 ├── versions.tf
 ├── modules/
@@ -41,10 +42,7 @@ The solution deploys:
 │       ├── main.tf
 │       ├── variables.tf
 │       └── outputs.tf
-└── examples/
-    └── complete/
-        ├── main.tf
-        └── terraform.tfvars
+
 ```
 
 ## Step-by-Step Deployment Instructions
