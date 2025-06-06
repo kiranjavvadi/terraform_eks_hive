@@ -164,3 +164,48 @@ The module provides the following outputs:
 - Nodes are deployed in private subnets
 - Cluster endpoint access is configured for public access (can be restricted based on requirements)
 
+# Running the deployment
+### Check AWS credentials
+aws sts get-caller-identity >/dev/null 2>&1 || { echo "❌ AWS credentials not configured. Please run 'aws configure'." >&2; exit 1; }
+
+### Initialize Terraform
+echo "📦 Initializing Terraform..."
+terraform init
+
+### Format Terraform files
+echo "🎨 Formatting Terraform files..."
+terraform fmt -recursive
+
+### Validate configuration
+echo "✅ Validating Terraform configuration..."
+terraform validate
+
+### Plan deployment
+echo "📋 Planning deployment..."
+terraform plan -out=tfplan
+
+### Apply deployment
+echo "🔨 Applying deployment (this will take 15-20 minutes)..."
+terraform apply tfplan
+
+### Configure kubectl
+echo "⚙️ Configuring kubectl..."
+aws eks --region $(terraform output -raw aws_region) update-kubeconfig \
+    --name $(terraform output -raw cluster_name)
+
+### Wait for nodes to be ready
+echo "⏳ Waiting for nodes to be ready..."
+kubectl wait --for=condition=Ready nodes --all --timeout=300s
+
+### Check deployment status
+echo "🔍 Checking deployment status..."
+kubectl get nodes
+kubectl get pods -n hiive-app
+kubectl get svc -n hiive-app
+
+### Get application URL
+echo "🌐 Application URL:"
+APP_URL=$(kubectl get svc -n hiive-app nginx-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "LoadBalancer provisioning...")
+echo "   http://${APP_URL}"
+
+To destroy the infrastructure, run: terraform destroy -auto-approve.
